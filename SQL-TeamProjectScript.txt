@@ -1,0 +1,343 @@
+
+--drop all tables
+Drop Table Product cascade constraints;
+/
+Drop Table Customer cascade constraints;
+/
+Drop Table orders cascade constraints;
+/
+Drop Table ordersdetail cascade constraints;
+/
+Drop Table payment cascade constraints;
+/
+Drop Table productdetail cascade constraints;
+/
+Drop Table shoppingcart cascade constraints;
+/
+Drop Table department cascade constraints;
+/
+Drop Table categories cascade constraints;
+/
+Drop Table customer_order cascade constraints;
+/
+Drop Table product_price_discount cascade constraints;
+/
+--create table customer
+Create Table Customer
+		( CustomerID		number(6) NOT NULL PRIMARY KEY,
+		  CustomerLastName	varchar2(20) NOT NULL,
+		  CustomerFirstName	varchar2(20) NOT NULL,
+		  CustomerContact	varchar2(22) NOT NULL,
+		  CustomerAddress	varchar2(40)
+		);
+/
+insert into Customer values (400400, 'Susan', 'Brown', '416-880-9854', '2600 Don mills rd');
+insert into Customer values (400401, 'Jim', 'Kern', '416-838-8372', '80 Valleybrook Drive');
+insert into Customer values (400402, 'Martha', 'Woods', '416-382-3821', '3-89 Queen St E,');
+insert into Customer values (400403, 'Ellen', 'Owens', '416-382-3827', '115 Hanson St');
+insert into Customer values (400404, 'Henry', 'Perkins', '416-282-1827', '70 York St');
+insert into Customer values (400405, 'Carol', 'Rose', '416-281-2731', '21 New St, Toronto');
+insert into Customer values (400406, 'Susan', 'Brown', '647-298-2818', '350 Burnhamthorpe Rd E');
+insert into Customer values (400407, 'Dan', 'Smith', '647-291-8212', '5255 Yonge St');
+insert into Customer values (400408, 'Fred', 'Campbell', '647-381-3891', '250 Consumers Rd');
+insert into Customer values (400409, 'Paula', 'Jacobs', '647-381-1272', '1801 Lakeshore Rd W');
+
+
+--create table department
+Create Table Department
+		( DepartmentID		number(6) NOT NULL PRIMARY KEY,
+		  DepartmentName	varchar2(20) NOT NULL,
+		  DepartmentDescription	varchar2(40)
+		);
+/
+insert into Department values (1, 'Latest Phone', 'People who want the latest phone');
+insert into Department values (2, 'Old But Cheap', 'People who want cheaper phone');
+
+--create table categories
+Create Table categories
+		( CategoriesID		number(6) NOT NULL PRIMARY KEY,
+		  categoriesName	varchar2(20)
+		);
+/
+insert into categories values (1, 'Apple');
+insert into categories values (2, 'Samsung');
+
+--create table orders
+Create Table Orders
+		( OrdersID		number(6),
+		  CustomerID		number(6),
+		  PRIMARY KEY (OrdersID),
+		  Constraint fk_CustomerIDOrders FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+		);
+/
+insert into Orders values (500500, 400409);
+insert into Orders values (500501, 400407);
+insert into Orders values (500502, 400403);
+insert into Orders values (500503, 400404);
+insert into Orders values (500504, 400405);
+insert into Orders values (500505, 400402);
+insert into Orders values (500506, 400403);
+insert into Orders values (500507, 400404);
+insert into Orders values (500508, 400406);
+insert into Orders values (500509, 400401);
+
+--create table product
+Create Table Product
+		( ProductID	number(6) NOT NULL PRIMARY KEY,
+		  ProductName	varchar2(20),
+		  ProductPrice	number(19,4),
+		  DepartmentID	number(6),
+		  CategoriesID	number(6),
+		  CONSTRAINT fk_DepartmentID FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID),
+		  CONSTRAINT  fk_CategoriesID FOREIGN KEY (CategoriesID) REFERENCES Categories (CategoriesID)      
+		);
+/
+insert into Product values (101100, 'iPhone6S', 900.00, 1, 1);
+insert into Product values (101101, 'iPhone6S Plus', 800.00, 1, 1);
+insert into Product values (101102, 'iPhone6 Plus', 700.00, 2, 1);	
+insert into Product values (101103, 'iPhone6', 600.00, 2, 1);
+insert into Product values (101104, 'iPhone5S', 500.00, 2, 1);
+insert into Product values (101105, 'Galaxy Note5', 900.00, 1, 2);
+insert into Product values (101106, 'Galaxy S6', 800.00, 1, 2);
+insert into Product values (101107, 'Galaxy Active', 700.00, 2, 2);
+insert into Product values (101108, 'Galaxy Neo', 600.00, 2, 2);
+insert into Product values (101109, 'Galaxy Note4', 500.00, 2, 2);
+
+
+
+
+
+
+--create table productdetail
+Create Table ProductDetail
+		( ProductDetailID	number(6) NOT NULL PRIMARY KEY,
+		  ProductBrand		varchar2(20) NOT NULL,
+		  ProductColor		varchar2(20),
+		  ProductSize		number(10),
+		  ProductDescription	varchar2(500),
+		  ProductID		number(6), 
+		  CONSTRAINT fk_productIDProductDetail FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+		);
+/
+insert into ProductDetail values (201201, 'Apple', 'White', 4.7, 'one of the latest and handy model!', 101100);
+insert into ProductDetail values (201202, 'Apple', 'White', 5.5, 'one of the latest and bigger model!', 101101);
+insert into ProductDetail values (201203, 'Apple', 'White', 5.5, 'one of the latest and bigger model!', 101102);
+insert into ProductDetail values (201204, 'Apple', 'White', 4.7, 'small but powerful!', 101103);
+insert into ProductDetail values (201205, 'Apple', 'White', 4.7, 'small but powerful!', 101104);
+insert into ProductDetail values (201206, 'Samsung', 'Black', 5.3, 'Feel the Galaxy Note5!', 101105);
+insert into ProductDetail values (201207, 'Samsung', 'Black', 4.5, 'Feel the Galaxy S6!', 101106);
+insert into ProductDetail values (201208, 'Samsung', 'Black', 4.5, 'Plus waterproof!!', 101107);
+insert into ProductDetail values (201209, 'Samsung', 'Black', 4.5, 'Feel the Galaxy Neo!', 101108);
+insert into ProductDetail values (201210, 'Samsung', 'Black', 5.3, 'Feel the Galaxy Note4!', 101109);
+
+--create table orderdetail
+Create Table OrdersDetail
+		( OrdersDetailID	number(6) NOT NULL PRIMARY KEY,
+		  ProductID		number(6),
+		  OrdersID		number(6),
+		  OrdersDate		date,
+		  Quantity		number(3),
+		  CONSTRAINT fk_ProductIDOrderDetail FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+		  CONSTRAINT fk_OrdersIDOrderDetail FOREIGN KEY (OrdersID) REFERENCES Orders(OrdersID)
+		);
+/
+insert into OrdersDetail values (600500, 101100, 500500, To_Date('12-Sep-2011','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600501, 101101, 500501, To_Date('16-Aug-1999','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600502, 101102, 500502, To_Date('12-Sep-2011','DD-Mon-YYYY'), 4);
+insert into OrdersDetail values (600503, 101103, 500503, To_Date('01-Mar-2000','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600504, 101104, 500504, To_Date('12-Sep-2011','DD-Mon-YYYY'), 2);
+insert into OrdersDetail values (600505, 101105, 500505, To_Date('16-Feb-2004','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600506, 101106, 500506, To_Date('01-Dec-2004','DD-Mon-YYYY'), 1);
+insert into OrdersDetail values (600507, 101107, 500507, To_Date('17-Mar-1999','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600508, 101108, 500508, To_Date('01-April-2003','DD-Mon-YYYY'), 3);
+insert into OrdersDetail values (600509, 101109, 500509, To_Date('12-Sep-2011','DD-Mon-YYYY'), 6);
+
+
+--create table shoppingcart
+Create Table ShoppingCart
+		( ShoppingCartID	number(6) NOT NULL PRIMARY KEY,
+		  ProductID		number(6),
+		  CustomerID		number(6),
+		  CONSTRAINT fk_ProductID FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+		  CONSTRAINT fk_CustomerID FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+		);
+/
+insert into ShoppingCart values (300300, 101102, 400401);
+insert into ShoppingCart values (300301, 101106, 400404);
+insert into ShoppingCart values (300302, 101108, 400406);
+insert into ShoppingCart values (300303, 101107, 400403);
+insert into ShoppingCart values (300304, 101109, 400400);
+insert into ShoppingCart values (300305, 101106, 400409);
+insert into ShoppingCart values (300306, 101102, 400408);
+insert into ShoppingCart values (300307, 101103, 400405);
+insert into ShoppingCart values (300308, 101105, 400407);
+insert into ShoppingCart values (300309, 101106, 400402);
+
+
+
+--create table payment
+Create Table Payment
+		( PaymentID		number(6) NOT NULL PRIMARY KEY,
+		  PaymentAmount		number(19,4),
+		  PaymentDate		date,
+		  OrdersID		number(6),
+		  CONSTRAINT fk_OrdersIDPayment FOREIGN KEY (OrdersID) REFERENCES Orders(OrdersID)
+		);
+/
+insert into Payment values (800800, 900.00, To_Date('12-Sep-2011','DD-Mon-YYYY'), 500500);
+insert into Payment values (800801, 800.00, To_Date('16-Aug-1999','DD-Mon-YYYY'), 500501);
+insert into Payment values (800802, 700.00, To_Date('12-Sep-2011','DD-Mon-YYYY'), 500502);
+insert into Payment values (800803, 600.00, To_Date('01-Mar-2000','DD-Mon-YYYY'), 500503);
+insert into Payment values (800804, 500504, To_Date('12-Sep-2011','DD-Mon-YYYY'), 500504);
+insert into Payment values (800805, 500505, To_Date('16-Feb-2004','DD-Mon-YYYY'), 500505);
+insert into Payment values (800806, 500506, To_Date('01-Dec-2004','DD-Mon-YYYY'), 500506);
+insert into Payment values (800807, 500507, To_Date('17-Mar-1999','DD-Mon-YYYY'), 500507);
+insert into Payment values (800808, 500508, To_Date('01-April-2003','DD-Mon-YYYY'), 500508);
+insert into Payment values (800809, 500509, To_Date('12-Sep-2011','DD-Mon-YYYY'), 500509);
+
+--create an index
+Create Index idx_customer
+on Customer( CustomerLastName, CustomerFirstName);
+/
+--create an sequence  seq_product_id
+Create Sequence seq_product_id
+start with 101110
+increment by 1;
+/
+Insert into product values (seq_product_id.nextval, 'iPhone5', 400.00, 2, 1);
+Insert into product values (seq_product_id.nextval, 'Galaxy Note3', 400.00, 2, 2);
+
+--create an sequence  seq_ShoppingCart_id
+Create Sequence seq_ShoppingCart_id
+start with 300310
+increment by 1;
+/
+insert into ShoppingCart values (seq_ShoppingCart_id.nextval, 101106, 400406);
+insert into ShoppingCart values (seq_ShoppingCart_id.nextval, 101103, 400403);
+
+--create an index
+Create Index idx_product
+on Product(ProductName);
+/
+--create a procedure UpdateNameCustomer
+CREATE OR REPLACE PROCEDURE UpdateNameCustomer ( 
+customer_id_in IN NUMBER,  
+customer_lastname_in IN VARCHAR2,
+customer_firstname_in IN VARCHAR2)
+AS
+
+BEGIN
+
+UPDATE customer 
+SET CustomerLastName = customer_lastname_in, CustomerFirstName = customer_firstname_in
+WHERE CustomerID = customer_id_in;
+
+END;
+
+/
+
+
+--create a procedure UpdateCustomerAddressCustomer
+CREATE OR REPLACE PROCEDURE UpdateCustomerAddressCustomer( Cutomer_id_in IN NUMBER,  Cutomer_Address_in IN VARCHAR2)
+AS
+
+BEGIN
+
+UPDATE Customer
+SET CustomerAddress = Cutomer_Address_in
+WHERE CustomerID = Cutomer_id_in;
+
+END;
+
+/
+--create a procedure UpdateDescriptionProductDetail
+CREATE OR REPLACE PROCEDURE UpdateDescriptionProductDetail( Product_id_in IN NUMBER,  Product_Description_in IN VARCHAR2)
+AS
+
+BEGIN
+
+UPDATE ProductDetail 
+SET ProductDescription = Product_Description_in
+WHERE ProductID = Product_id_in;
+
+END;
+/
+
+--create a function AveragePriceBycategories
+CREATE OR REPLACE FUNCTION AveragePriceBycategories(categories_ID IN VARCHAR2) 
+RETURN NUMBER
+AS 
+avg_categories NUMBER;
+
+BEGIN
+SELECT AVG(productPrice) INTO avg_categories
+FROM Product
+WHERE categoriesID = categories_ID;
+RETURN (avg_categories);
+END;
+
+/
+
+--create a function CountProductbycategories
+CREATE OR REPLACE FUNCTION CountProductbycategories (categories_id_in IN VARCHAR2)
+return NUMBER
+AS 
+num_record_categories NUMBER;
+
+BEGIN
+SELECT COUNT  ( * ) INTO num_record_categories
+FROM Product
+WHERE categoriesID = categories_id_in;
+RETURN (num_record_categories); 
+END;
+/
+
+
+--create a function CountCustomer
+CREATE OR REPLACE FUNCTION CountCustomer
+return NUMBER
+AS 
+num_customer NUMBER;
+
+BEGIN
+SELECT COUNT  ( * ) INTO num_customer
+FROM Customer;
+RETURN (num_customer);
+END;
+/
+
+
+--create trigger
+CREATE TABLE CUSTOMER_ORDER
+	(
+ 	 ORDERID 		NUMBER(6),
+	 CUSTOMERID		NUMBER(6), 
+	 ORDERDATE		DATE
+	);
+/
+CREATE OR REPLACE TRIGGER CUSTOMER_ORDER_AFT_ROW
+AFTER UPDATE of ORDERSID ON Orders
+FOR EACH ROW
+BEGIN
+INSERT INTO CUSTOMER_ORDER(ORDERID , CUSTOMERID,  ORDERDATE)
+VALUES (:old.ORDERSID,:old.CUSTOMERID, SYSDATE);
+END;
+/
+--create trigger
+CREATE TABLE PRODUCT_PRICE_DISCOUNT
+	(	
+	PRODUCTID			        NUMBER(6),
+  PRODUCTNAME 			    VARCHAR2(20),
+  PRODUCTPRICE		      NUMBER(19,4),
+  SALE_PRICE		NUMBER(19,4),
+  SALE_DATE			        DATE
+  );
+/
+CREATE OR REPLACE TRIGGER PRODUCT_BEF_PRICE_DC_ROW
+BEFORE UPDATE of PRODUCTPRICE on PRODUCT 
+FOR EACH ROW
+BEGIN
+INSERT INTO PRODUCT_PRICE_DISCOUNT (PRODUCTID, PRODUCTNAME,PRODUCTPRICE,  SALE_PRICE, SALE_DATE)
+VALUES (:old.PRODUCTID, :old.PRODUCTNAME, :old.PRODUCTPRICE, :new.PRODUCTPRICE, SYSDATE);
+END;
+/
